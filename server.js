@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 //GET Route for homepage
-app.get('*', (req, res) =>
+app.get('/', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
@@ -36,7 +36,7 @@ app.post('/api/notes', (req, res) => {
     // If all the required properties are present
     if (title && text) {
       // Variable for the object we will save
-      const newReview = {
+      const newNote = {
         title,
         text,
         //note_id: uuid(),
