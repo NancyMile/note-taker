@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 const notesData = require('./db/db.json');
 
@@ -23,10 +24,7 @@ app.get('/notes', (req, res) =>
 );
 
 // GET Route for retrieving all the notes
-app.get('/api/notes', (req, res) => {
-  console.info(`${req.method} request received for notes`);
-  readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
-});
+app.get('/api/notes', (req, res) => res.json(notesData));
 
 app.post('/api/notes', (req, res) => {
     // Log that a POST request was received
@@ -34,13 +32,37 @@ app.post('/api/notes', (req, res) => {
     // Destructuring assignment for the items in req.body
     const { title, text } = req.body;
     // If all the required properties are present
-    if (title && text) {
+    if (req.body.title && req.body.text) {
       // Variable for the object we will save
       const newNote = {
         title,
         text,
         //note_id: uuid(),
       };
+
+    // Obtain existing notes
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        // Convert string into JSON object
+        const parsedNote = JSON.parse(data);
+
+        // Add a new note
+        parsedNote.push(newNote);
+
+        // Write updated notes back to the file
+        fs.writeFile(
+          './db/db.json',
+          JSON.stringify(parsedNote, null, 4),
+          (writeErr) =>
+            writeErr
+              ? console.error(writeErr)
+              : console.info('Successfully updated notes!')
+        );
+      }
+    });
+
       const response = {
         status: 'success',
         body: newNote,
