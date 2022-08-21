@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+// Helper method for generating unique id
+const uuid = require('./helpers/uuid');
 
 const notesData = require('./db/db.json');
 
@@ -37,7 +39,7 @@ app.post('/api/notes', (req, res) => {
       const newNote = {
         title,
         text,
-        //note_id: uuid(),
+        note_id: uuid(),
       };
 
     // Obtain existing notes
